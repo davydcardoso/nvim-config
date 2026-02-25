@@ -1,10 +1,9 @@
 local nvim_lsp = require("lspconfig")
--- local null_ls = require("null-ls")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local languages = {
-  "ruby_lsp", 
-  "elixirls",
+	"ruby_lsp",
+	"elixirls",
 	"bashls",
 	"clangd",
 	"cssls",
@@ -41,36 +40,20 @@ local on_attach = function(client, bufnr)
 	buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 	buf_set_keymap("n", "<space>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 	buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+	-- diagnostic mappings (use new vim.diagnostic API)
 	buf_set_keymap("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-	buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", opts)
-	buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", opts)
-	buf_set_keymap("n", "<space>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
+	buf_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+	buf_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+	buf_set_keymap("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
 	vim.keymap.set("n", "<leader>f", function()
-		vim.lsp.buf.format({ 
-      lsp_fallback = true,
-      async = false,
-      timeout_ms = 5000,
-    })
+		vim.lsp.buf.format({
+			lsp_fallback = true,
+			async = false,
+			timeout_ms = 5000,
+		})
 	end, opts)
 end
-
--- null_ls.setup({
--- 	on_attach = on_attach,
--- 	debounce = 150,
--- 	sources = {
--- 		null_ls.builtins.code_actions.gitsigns,
--- 		null_ls.builtins.code_actions.eslint,
--- 		null_ls.builtins.code_actions.refactoring,
--- 		null_ls.builtins.diagnostics.eslint,
--- 		null_ls.builtins.formatting.prettier.with({
--- 			condition = function(utils)
--- 				return utils.root_has_file({ ".prettierrc.json", ".prettierrc.js", ".prettierrc" })
--- 			end,
--- 		}),
--- 		null_ls.builtins.formatting.stylua,
--- 	},
--- })
 
 for _, lang in ipairs(languages) do
 	nvim_lsp[lang].setup({

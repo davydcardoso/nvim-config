@@ -25,6 +25,17 @@ require("lazy").setup({
 			require("core.plugins.lsp") -- Caminho corrigido
 		end,
 	},
+	{
+		"akinsho/toggleterm.nvim",
+		config = function()
+			require("toggleterm").setup({
+				size = 15,
+				open_mapping = [[<leader>tt]],
+				direction = "horizontal", -- fica embaixo
+				shade_terminals = false,
+			})
+		end,
+	},
 	-- {
 	-- 	"jose-elias-alvarez/null-ls.nvim",
 	-- 	requires = {
@@ -36,19 +47,12 @@ require("lazy").setup({
 	-- },
 	{ "nvim-lua/plenary.nvim" },
 	{ "williamboman/mason.nvim", config = true },
-	{
-		"junegunn/fzf.vim",
-		dependencies = {
-			{ "junegunn/fzf", dir = "~/.fzf", build = "./install --all" },
-		},
-		config = function()
-			vim.g.fzf_layout = { down = "~30%" }
-		end,
-	},
+	-- fzf.vim removed; using ibhagwan/fzf-lua instead
 	{
 		"folke/trouble.nvim",
 		opts = {},
-		cmd = "Trouble",
+		-- load automatically on a very lazy event (after startup)
+		event = "VeryLazy",
 		keys = {
 			{
 				"<leader>xx",
@@ -117,78 +121,7 @@ require("lazy").setup({
 			"hrsh7th/cmp-cmdline",
 			"onsails/lspkind.nvim",
 		},
-		config = function()
-			-- See `:help cmp`
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-			luasnip.config.setup({})
-
-			local lspkind = require("lspkind")
-
-			-- -- `/` cmdline setup.
-			-- cmp.setup.cmdline("/", {
-			-- 	mapping = cmp.mapping.preset.cmdline(),
-			-- 	sources = {
-			-- 		{ name = "buffer" },
-			-- 	},
-			-- })
-			--
-			-- -- `:` cmdline setup.
-			-- cmp.setup.cmdline(":", {
-			-- 	mapping = cmp.mapping.preset.cmdline(),
-			-- 	sources = cmp.config.sources({
-			-- 		{ name = "path" },
-			-- 	}, {
-			-- 		{
-			-- 			name = "cmdline",
-			-- 			option = {
-			-- 				ignore_cmds = { "Man", "!" },
-			-- 			},
-			-- 		},
-			-- 	}),
-			-- })
-
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
-				},
-				---@diagnostic disable-next-line: missing-fields
-				formatting = {
-					format = lspkind.cmp_format({
-						mode = "symbol",
-						maxwidth = 50,
-						ellipsis_char = "...",
-						symbol_map = { Codeium = "" },
-					}),
-				},
-				completion = { completeopt = "menu,menuone,noinsert" },
-
-				mapping = cmp.mapping.preset.insert({
-					["<C-n>"] = cmp.mapping.select_next_item(),
-					["<C-p>"] = cmp.mapping.select_prev_item(),
-
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-
-					["<C-y>"] = cmp.mapping.confirm({ select = true }),
-
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<Tab>"] = cmp.mapping.select_next_item(),
-				}),
-				sources = {
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
-					{ name = "path" },
-					{ name = "codeium" },
-				},
-			})
-		end,
+		config = require("core.plugins.cmp"),
 	},
 
 	-- }}}
@@ -215,61 +148,7 @@ require("lazy").setup({
 		-- Formatter by filetype
 		"stevearc/conform.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			local conform = require("conform")
-
-			conform.setup({
-				formatters_by_ft = {
-					bash = { "shfmt" },
-					javascript = { "prettier" },
-					typescript = { "prettier" },
-					javascriptreact = { "prettier" },
-					typescriptreact = { "prettier" },
-					svelte = { "prettier" },
-					css = { "prettier" },
-					html = { "prettier" },
-					json = { "prettier" },
-					yaml = { "prettier" },
-					markdown = { "prettier" },
-					graphql = { "prettier" },
-					lua = { "stylua" },
-					python = { "ruff" },
-					go = { "gofmt" },
-          elixir = { "mix format" },
-				},
-				format_on_save = {
-					lsp_fallback = true,
-					async = false,
-					timeout_ms = 5000,
-				},
-			})
-
-			vim.keymap.set({ "n", "v" }, "<leader>mp", function()
-				conform.format({
-					lsp_fallback = true,
-					async = false,
-					timeout_ms = 5000,
-				})
-			end, { desc = "Format file or range (in visual mode)" })
-
-			vim.api.nvim_create_user_command("FormatDisable", function(args)
-				if args.bang then
-					-- FormatDisable! will disable formatting just for this buffer
-					vim.b.disable_autoformat = true
-				else
-					vim.g.disable_autoformat = true
-				end
-			end, {
-				desc = "Disable autoformat-on-save",
-				bang = true,
-			})
-			vim.api.nvim_create_user_command("FormatEnable", function()
-				vim.b.disable_autoformat = false
-				vim.g.disable_autoformat = false
-			end, {
-				desc = "Re-enable autoformat-on-save",
-			})
-		end,
+		config = require("core.plugins.conform"),
 	},
 	-- }}}
 	-- }}}
@@ -347,6 +226,9 @@ require("lazy").setup({
 		config = function()
 			vim.defer_fn(function()
 				---@diagnostic disable-next-line: missing-fields
+				if not pcall(require, "nvim-treesitter.configs") then
+					return
+				end
 				require("nvim-treesitter.configs").setup({
 					ensure_installed = {
 						"regex",
@@ -486,36 +368,6 @@ require("lazy").setup({
 			vim.o.background = "dark" -- Ou 'light' se preferir um tema claro
 		end,
 	},
-	-- }}}
-	-- }}}
-	-- {{{ Nvim-Tmux-Navigator             UTIL - Integration with tmux
-	--
-	-- NOTE: you do have to make some config on the tmux side. This should
-	--       be placed on your `tmux.conf`:
-	--
-	-- is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-	--     | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-	--
-	-- bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h' 'select-pane -L'
-	-- bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j' 'select-pane -D'
-	-- bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k' 'select-pane -U'
-	-- bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l' 'select-pane -R'
-	--
-	-- tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-	--
-	-- if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-	--     "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
-	-- if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-	--     "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
-	--
-	-- bind-key -n 'C-Space' if-shell "$is_vim" 'send-keys C-Space' 'select-pane -t:.+'
-	--
-	-- bind-key -T copy-mode-vi 'C-h' select-pane -L
-	-- bind-key -T copy-mode-vi 'C-j' select-pane -D
-	-- bind-key -T copy-mode-vi 'C-k' select-pane -U
-	-- bind-key -T copy-mode-vi 'C-l' select-pane -R
-	-- bind-key -T copy-mode-vi 'C-\' select-pane -l
-	-- bind-key -T copy-mode-vi 'C-Space' select-pane -t:.+
 
 	{
 		"alexghergh/nvim-tmux-navigation",
@@ -556,6 +408,39 @@ require("lazy").setup({
 		end,
 	},
 	-- }}},
+
+	-- additional community plugins moved from old init.lua
+	{ "editorconfig/editorconfig-vim" },
+	{
+		"ThePrimeagen/refactoring.nvim",
+		dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter" },
+	},
+	{
+		"ibhagwan/fzf-lua",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = require("core.plugins.fzf_lua"),
+	},
+	{
+		"akinsho/bufferline.nvim",
+		version = "*",
+		dependencies = "nvim-tree/nvim-web-devicons",
+		config = require("core.plugins.bufferline"),
+	},
+	{ "nvim-pack/nvim-spectre" },
+	{ "Leviathenn/nvim-transparent", config = require("core.plugins.transparent") },
+
+	{
+		"MeanderingProgrammer/markdown.nvim",
+		main = "render-markdown",
+		opts = {},
+		name = "render-markdown",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
+		config = require("core.plugins.markdown"),
+	},
+
+	{ "nvim-tree/nvim-web-devicons" },
+	{ "nvim-tree/nvim-tree.lua", config = require("core.plugins.nvim_tree") },
+
 	-- {{{ Gitsigns                        VC - Adds git gutter / hunk blame&diff
 	{
 		-- Adds git related signs to the gutter, as well as utilities for managing changes
