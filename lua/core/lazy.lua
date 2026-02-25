@@ -21,6 +21,66 @@ require("lazy").setup({
 	-- {{{ LSPConfig                       CODE - LSP Configurations ans plugins
 	{ "williamboman/mason.nvim", config = true },
 	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		config = function()
+			require("copilot").setup({
+				panel = {
+					enabled = false,
+				},
+				suggestion = {
+					enabled = true,
+					auto_trigger = true,
+					keymap = {
+						accept = "<Tab>",
+						accept_word = "<M-w>",
+						accept_line = "<M-l>",
+						next = "<M-]>",
+						prev = "<M-[>",
+						dismiss = "<C-]>",
+					},
+				},
+				filetypes = {
+					yaml = true,
+					markdown = true,
+					help = false,
+					gitcommit = true,
+					gitrebase = false,
+				},
+			})
+		end,
+	},
+	{
+		"CopilotC-Nvim/CopilotChat.nvim",
+		dependencies = {
+			"zbirenbaum/copilot.lua",
+			"nvim-lua/plenary.nvim",
+		},
+		build = "make tiktoken", -- necessário para tokenizer
+		opts = {},
+		config = function()
+			require("CopilotChat").setup({
+				debug = false,
+				window = {
+					layout = "vertical", -- janela vertical
+					position = "right", -- fixa na direita
+					width = 0.35, -- 35% da largura da tela
+				},
+			})
+
+			-- atalhos
+			vim.keymap.set("n", "<leader>gc", "<cmd>CopilotChatToggle<cr>", { desc = "Copilot Chat" })
+			vim.keymap.set("v", "<leader>ce", "<cmd>CopilotChatExplain<cr>", { desc = "Explain code" })
+			vim.keymap.set("v", "<leader>cr", "<cmd>CopilotChatReview<cr>", { desc = "Review code" })
+			vim.keymap.set("v", "<leader>cf", "<cmd>CopilotChatFix<cr>", { desc = "Fix code" })
+		end,
+	},
+
+	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = { "williamboman/mason.nvim" },
 		config = true,
@@ -317,7 +377,7 @@ require("lazy").setup({
 			vim.g.lightline = {
 				active = {
 					left = {
-						{ "mode",     "paste" },
+						{ "mode", "paste" },
 						{ "readonly", "filename", "modified" },
 					},
 					right = {
@@ -420,7 +480,7 @@ require("lazy").setup({
 		config = require("core.plugins.bufferline"),
 	},
 	{ "nvim-pack/nvim-spectre" },
-	{ "Leviathenn/nvim-transparent",  config = require("core.plugins.transparent") },
+	{ "Leviathenn/nvim-transparent", config = require("core.plugins.transparent") },
 
 	{
 		"MeanderingProgrammer/markdown.nvim",
@@ -432,7 +492,7 @@ require("lazy").setup({
 	},
 
 	{ "nvim-tree/nvim-web-devicons" },
-	{ "nvim-tree/nvim-tree.lua",    config = require("core.plugins.nvim_tree") },
+	{ "nvim-tree/nvim-tree.lua", config = require("core.plugins.nvim_tree") },
 
 	-- {{{ Gitsigns                        VC - Adds git gutter / hunk blame&diff
 	{
