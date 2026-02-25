@@ -36,14 +36,21 @@ require("lazy").setup({
 					enabled = true,
 					auto_trigger = true,
 					keymap = {
-						accept = "<Tab>",
-						accept_word = "<M-w>",
-						accept_line = "<M-l>",
-						next = "<M-]>",
-						prev = "<M-[>",
-						dismiss = "<C-]>",
+						accept = false, -- remove o mapeamento padrão
 					},
 				},
+				-- suggestion = {
+				-- 	enabled = true,
+				-- 	auto_trigger = true,
+				-- 	keymap = {
+				-- 		accept = "<Tab>",
+				-- 		accept_word = "<M-w>",
+				-- 		accept_line = "<M-l>",
+				-- 		next = "<M-]>",
+				-- 		prev = "<M-[>",
+				-- 		dismiss = "<C-]>",
+				-- 	},
+				-- },
 				filetypes = {
 					yaml = true,
 					markdown = true,
@@ -52,6 +59,13 @@ require("lazy").setup({
 					gitrebase = false,
 				},
 			})
+		end,
+	},
+	{
+		"zbirenbaum/copilot-cmp",
+		dependencies = { "zbirenbaum/copilot.lua" },
+		config = function()
+			require("copilot_cmp").setup()
 		end,
 	},
 	{
