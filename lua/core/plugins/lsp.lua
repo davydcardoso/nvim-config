@@ -3,15 +3,15 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local languages = {
 	"ruby_lsp",
-	"elixirls",
+	-- "elixirls",
 	"bashls",
 	"clangd",
 	"cssls",
 	"gopls",
 	"jsonls",
 	"pyright",
-	"rust_analyzer",
-	"ts_ls",
+	-- "rust_analyzer",
+	-- "ts_ls",
 	"lua_ls",
 	"denols",
 }
@@ -89,4 +89,11 @@ nvim_lsp.rust_analyzer.setup({
 			},
 		},
 	},
+})
+
+nvim_lsp.elixirls.setup({
+	cmd = { vim.fn.stdpath("data") .. "/mason/bin/elixir-ls" },
+	on_attach = on_attach,
+	capabilities = capabilities,
+	root_dir = nvim_lsp.util.root_pattern("mix.exs", ".git"),
 })

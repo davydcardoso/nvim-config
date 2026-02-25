@@ -19,8 +19,15 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	-- }}}
 	-- {{{ LSPConfig                       CODE - LSP Configurations ans plugins
+	{ "williamboman/mason.nvim", config = true },
+	{
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = { "williamboman/mason.nvim" },
+		config = true,
+	},
 	{
 		"neovim/nvim-lspconfig",
+		lazy = false,
 		config = function()
 			require("core.plugins.lsp") -- Caminho corrigido
 		end,
@@ -36,15 +43,6 @@ require("lazy").setup({
 			})
 		end,
 	},
-	-- {
-	-- 	"jose-elias-alvarez/null-ls.nvim",
-	-- 	requires = {
-	-- 		"nvim-lua/plenary.nvim",
-	-- 		"neovim/nvim-lspconfig",
-	-- 		"ThePrimeagen/refactoring.nvim",
-	-- 		"lewis6991/gitsigns.nvim",
-	-- 	},
-	-- },
 	{ "nvim-lua/plenary.nvim" },
 	{ "williamboman/mason.nvim", config = true },
 	-- fzf.vim removed; using ibhagwan/fzf-lua instead
@@ -95,18 +93,12 @@ require("lazy").setup({
 			{
 				"L3MON4D3/LuaSnip",
 				build = (function()
-					-- Build Step is needed for regex support in snippets.
-					-- This step is not supported in many windows environments.
-					-- Remove the below condition to re-enable on windows.
 					if vim.fn.has("win32") == 1 or vim.fn.executable("make") == 0 then
 						return
 					end
 					return "make install_jsregexp"
 				end)(),
 				dependencies = {
-					-- `friendly-snippets` contains a variety of premade snippets.
-					--    See the README about individual language/framework/plugin snippets:
-					--    https://github.com/rafamadriz/friendly-snippets
 					{
 						"rafamadriz/friendly-snippets",
 						config = function()
@@ -325,7 +317,7 @@ require("lazy").setup({
 			vim.g.lightline = {
 				active = {
 					left = {
-						{ "mode", "paste" },
+						{ "mode",     "paste" },
 						{ "readonly", "filename", "modified" },
 					},
 					right = {
@@ -345,6 +337,7 @@ require("lazy").setup({
 					return vim.fn.getreg("%")
 				end
 			end
+
 			-- https://github.com/itchyny/lightline.vim/issues/657
 			vim.api.nvim_exec(
 				[[
@@ -427,7 +420,7 @@ require("lazy").setup({
 		config = require("core.plugins.bufferline"),
 	},
 	{ "nvim-pack/nvim-spectre" },
-	{ "Leviathenn/nvim-transparent", config = require("core.plugins.transparent") },
+	{ "Leviathenn/nvim-transparent",  config = require("core.plugins.transparent") },
 
 	{
 		"MeanderingProgrammer/markdown.nvim",
@@ -439,7 +432,7 @@ require("lazy").setup({
 	},
 
 	{ "nvim-tree/nvim-web-devicons" },
-	{ "nvim-tree/nvim-tree.lua", config = require("core.plugins.nvim_tree") },
+	{ "nvim-tree/nvim-tree.lua",    config = require("core.plugins.nvim_tree") },
 
 	-- {{{ Gitsigns                        VC - Adds git gutter / hunk blame&diff
 	{
