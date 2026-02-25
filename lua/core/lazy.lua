@@ -25,15 +25,15 @@ require("lazy").setup({
 			require("core.plugins.lsp") -- Caminho corrigido
 		end,
 	},
-	{
-		"jose-elias-alvarez/null-ls.nvim",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"neovim/nvim-lspconfig",
-			"ThePrimeagen/refactoring.nvim",
-			"lewis6991/gitsigns.nvim",
-		},
-	},
+	-- {
+	-- 	"jose-elias-alvarez/null-ls.nvim",
+	-- 	requires = {
+	-- 		"nvim-lua/plenary.nvim",
+	-- 		"neovim/nvim-lspconfig",
+	-- 		"ThePrimeagen/refactoring.nvim",
+	-- 		"lewis6991/gitsigns.nvim",
+	-- 	},
+	-- },
 	{ "nvim-lua/plenary.nvim" },
 	{ "williamboman/mason.nvim", config = true },
 	{
@@ -235,6 +235,7 @@ require("lazy").setup({
 					lua = { "stylua" },
 					python = { "ruff" },
 					go = { "gofmt" },
+          elixir = { "mix format" },
 				},
 				format_on_save = {
 					lsp_fallback = true,

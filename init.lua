@@ -38,7 +38,7 @@ require("lazy").setup({
 			vim.diagnostic.config({
 				virtual_text = false,
 				float = {
-					source = "always",
+					source = "",
 				},
 			})
 
@@ -121,13 +121,14 @@ require("lazy").setup({
 					if client and client.server_capabilities.documentHighlightProvider then
 						local highlight_augroup =
 							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
-						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+
+            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
 							group = highlight_augroup,
 							callback = function()
 								vim.lsp.buf.document_highlight()
-								vim.diagnostic.open_float(nil, { scope = "cursor" })
-							end,
+					      vim.diagnostic.open_float(nil, { scope = "cursor", focus = false, focusable = false })
+              end,
 						})
 
 						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
@@ -245,32 +246,11 @@ require("lazy").setup({
     },
 	}, 
 	{ "editorconfig/editorconfig-vim" },
+        
   {
     "nvim-treesitter/nvim-treesitter",
     lazy = false,
     build = ":TSUpdate",
-    config = function()
-
-      local ok, config = pcall(require, "nvim-treesitter.configs")
-      if not ok then return end
-
-      config.setup({
-        ensure_installed = {
-          "lua",
-          "javascript",
-          "typescript",
-          "html",
-          "css",
-          "elixir",
-        },
-        highlight = {
-          enable = true,
-        },
-        indent = {
-          enable = true,
-        },
-      })
-    end,
   },
 	{ "ThePrimeagen/refactoring.nvim",
     dependencies = {
@@ -345,8 +325,8 @@ require("gruvbox").setup({
   transparent_mode = false,
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = {"lua", "javascript", "typescript", "html", "css", "elixir",},
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "elixir",
   callback = function()
     vim.treesitter.start()
   end,
