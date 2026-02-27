@@ -13,7 +13,7 @@ local languages = {
 	-- "rust_analyzer",
 	-- "ts_ls",
 	"lua_ls",
-	"denols",
+	-- "denols",
 }
 
 local on_attach = function(client, bufnr)
@@ -97,3 +97,13 @@ nvim_lsp.elixirls.setup({
 	capabilities = capabilities,
 	root_dir = nvim_lsp.util.root_pattern("mix.exs", ".git"),
 })
+
+vim.opt.title = true
+vim.opt.titlestring = "%t - %{fnamemodify(getcwd(), ':t')}"
+
+-- nvim_lsp.denols.setup({
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- 	root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
+-- 	single_file_support = false,
+-- })
