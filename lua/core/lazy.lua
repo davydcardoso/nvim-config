@@ -19,7 +19,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	-- }}}
 	-- {{{ LSPConfig                       CODE - LSP Configurations ans plugins
-	{ "williamboman/mason.nvim", config = true },
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = { "williamboman/mason.nvim" },
@@ -240,6 +239,9 @@ require("lazy").setup({
 						"html",
 						"prisma",
 						"vue",
+						"elixir",
+						"heex",
+						"eex",
 					},
 
 					auto_install = false,
@@ -317,7 +319,7 @@ require("lazy").setup({
 			vim.g.lightline = {
 				active = {
 					left = {
-						{ "mode", "paste" },
+						{ "mode",     "paste" },
 						{ "readonly", "filename", "modified" },
 					},
 					right = {
@@ -420,7 +422,7 @@ require("lazy").setup({
 		config = require("core.plugins.bufferline"),
 	},
 	{ "nvim-pack/nvim-spectre" },
-	{ "Leviathenn/nvim-transparent", config = require("core.plugins.transparent") },
+	{ "Leviathenn/nvim-transparent",  config = require("core.plugins.transparent") },
 
 	{
 		"MeanderingProgrammer/markdown.nvim",
@@ -432,7 +434,7 @@ require("lazy").setup({
 	},
 
 	{ "nvim-tree/nvim-web-devicons" },
-	{ "nvim-tree/nvim-tree.lua", config = require("core.plugins.nvim_tree") },
+	{ "nvim-tree/nvim-tree.lua",    config = require("core.plugins.nvim_tree") },
 
 	-- {{{ Gitsigns                        VC - Adds git gutter / hunk blame&diff
 	{
